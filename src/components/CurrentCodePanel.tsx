@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-interface CodePanelProps {
+interface CurrentCodePanelProps {
   currentCode: string;
   onRun: (code: string) => void;
+  onTransitionToggle: (enabled: boolean) => void;
 }
 
-const CurrentCodePanel: React.FC<CodePanelProps> = ({ currentCode, onRun }) => {
+const CurrentCodePanel: React.FC<CurrentCodePanelProps> = ({ currentCode, onRun, onTransitionToggle }) => {
   const [editedCode, setEditedCode] = useState<string>(currentCode);
+  const [transitionEnabled, setTransitionEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     setEditedCode(currentCode);
@@ -14,6 +16,12 @@ const CurrentCodePanel: React.FC<CodePanelProps> = ({ currentCode, onRun }) => {
 
   const handleRun = () => {
     onRun(editedCode);
+  };
+
+  const handleTransitionToggle = () => {
+    const newState = !transitionEnabled;
+    setTransitionEnabled(newState);
+    onTransitionToggle(newState);
   };
 
   return (
@@ -27,6 +35,9 @@ const CurrentCodePanel: React.FC<CodePanelProps> = ({ currentCode, onRun }) => {
         style={{ width: '100%', fontFamily: 'monospace' }}
       />
       <button onClick={handleRun} style={{ marginTop: '10px' }}>Run Code</button>
+      <button onClick={handleTransitionToggle} style={{ marginTop: '10px', marginLeft: '10px' }}>
+        {transitionEnabled ? 'Disable Transition' : 'Enable Transition'}
+      </button>
     </div>
   );
 };

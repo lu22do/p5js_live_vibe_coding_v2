@@ -21,6 +21,7 @@ function App() {
   const [activeCode, setActiveCode] = useState<string>('');
   const [input, setInput] = useState<string>('');
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [transitionEnabled, setTransitionEnabled] = useState<boolean>(false);
 
   const messagesRef = collection(db, 'messages');
   const codesRef = doc(db, 'codes', 'main');
@@ -69,10 +70,13 @@ function App() {
     await addDoc(messagesRef, userMessage);
 
     try {
+      const systemPrompt = transitionEnabled && previousCode
+        ? `Generate p5.js code that creates a smooth 10-second transition animation from the previous code to the new code. Previous code: ${previousCode}. New description: ${input}. Generate only the p5.js sketch code as a function(p) { ... } without any markdown or explanation.`
+        : 'You are a p5.js code generator. Generate only the p5.js sketch code as a function(p) { ... } without any markdown or explanation.';
       const response = await openai.chat.completions.create({
         model: 'gpt-4',
         messages: [
-          { role: 'system', content: 'You are a p5.js code generator. Generate only the p5.js sketch code as a function(p) { ... } without any markdown or explanation.' },
+          { role: 'system', content: systemPrompt },
           ...messages.map(m => ({ role: m.role, content: m.content })),
           { role: 'user', content: input },
         ],
@@ -93,7 +97,7 @@ function App() {
     <div className="app">
       <ChatPanel messages={messages} input={input} setInput={setInput} sendMessage={sendMessage} />
       <PreviousCodePanel previousCode={previousCode} onRun={setActiveCode} />
-      <CurrentCodePanel currentCode={currentCode} onRun={setActiveCode} />
+      <CurrentCodePanel currentCode={currentCode} onRun={setActiveCode} onTransitionToggle={setTransitionEnabled} />
       <RenderPanel currentCode={activeCode} />
     </div>
   );
