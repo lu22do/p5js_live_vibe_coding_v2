@@ -1,27 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import OpenAI from 'openai';
 import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
-import p5 from 'p5';
+import { type Message } from './types';
+import ChatPanel from './components/ChatPanel';
+import CodePanel from './components/CodePanel';
+import RenderPanel from './components/RenderPanel';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp?: Date;
-}
-
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentCode, setCurrentCode] = useState<string>('');
   const [input, setInput] = useState<string>('');
-  const renderRef = useRef<HTMLDivElement>(null);
-  const p5Instance = useRef<any>(null);
 
   const messagesRef = collection(db, 'messages');
 
@@ -62,52 +57,13 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (p5Instance.current) {
-      p5Instance.current.remove();
-    }
-    if (currentCode && renderRef.current) {
-      try {
-        const sketch = new Function('p', `(${currentCode})`) as (p: p5) => void;
-        p5Instance.current = new p5(sketch, renderRef.current);
-      } catch (error) {
-        console.error('Error creating p5 sketch:', error);
-      }
-    }
-  }, [currentCode]);
-
   return (
     <div className="app">
-      <div className="panel chat-panel">
-        <h2>Chat</h2>
-        <div className="messages">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`message ${msg.role}`}>
-              <strong>{msg.role}:</strong> {msg.content}
-            </div>
-          ))}
-        </div>
-        <div className="input-area">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Describe the p5.js sketch..."
-          />
-          <button onClick={sendMessage}>Send</button>
-        </div>
-      </div>
-      <div className="panel code-panel">
-        <h2>Code</h2>
-        <pre>{currentCode}</pre>
-      </div>
-      <div className="panel render-panel">
-        <h2>Render</h2>
-        <div ref={renderRef} className="p5-container"></div>
-      </div>
+      <ChatPanel messages={messages} input={input} setInput={setInput} sendMessage={sendMessage} />
+      <CodePanel currentCode={currentCode} onCodeChange={setCurrentCode} />
+      <RenderPanel currentCode={currentCode} />
     </div>
   );
-}
+};
 
 export default App;

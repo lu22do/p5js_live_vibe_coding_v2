@@ -89,7 +89,6 @@ export default defineConfig([
 ])
 ```
 
-
 ## Instructions used to create the app
 
 Let's build an app in vitejs with firebase for state storage and openai API for chat & code generation. This app allows the user to chat with an AI to generate p5js code that is then rendered right away.
@@ -97,3 +96,20 @@ This app should use the full width of the browser and have 3 panels:
 - left panel for chat with the AI
 - middle panel for the current code
 - right panel for rendering with p5js
+
+## How the p5js code is rendered
+
+The p5.js rendering is triggered by changes to the currentCode state variable in the RenderPanel component.
+
+Here's how it works:
+
+1. When you send a message in the chat, the OpenAI API generates p5.js code.
+2. The generated code is cleaned and stored in the currentCode state (in App.tsx).
+3. Since currentCode is passed as a prop to RenderPanel, the component re-renders.
+4. The useEffect hook in RenderPanel (which depends on currentCode) detects the change and:
+  - Removes any existing p5.js instance (to clean up the previous sketch).
+  - Creates a new p5.js sketch using the updated code.
+  - Attaches it to the DOM element referenced by renderRef.
+
+This ensures that every time new code is generated, the previous sketch is cleared and the new one is rendered immediately in the right panel.
+

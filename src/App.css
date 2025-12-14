@@ -66,4 +66,5 @@
   height: 100%;
   border: 1px solid #ccc;
   flex: 1;
+  position: relative;
 }
