@@ -113,3 +113,8 @@ Here's how it works:
 
 This ensures that every time new code is generated, the previous sketch is cleared and the new one is rendered immediately in the right panel.
 
+## Spec
+
+- Chatting request updates the current code and make it live right away (and move previous code to the "Previous Code" panel)
+- Maybe some transition code should run at that time (as an option)
+- Manual Editing of either previous or current code is possible and applying the change is also possible

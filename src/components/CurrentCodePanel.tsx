@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 interface CodePanelProps {
   currentCode: string;
-  onCodeChange: (code: string) => void;
+  onRun: (code: string) => void;
 }
 
-const CodePanel: React.FC<CodePanelProps> = ({ currentCode, onCodeChange }) => {
+const CurrentCodePanel: React.FC<CodePanelProps> = ({ currentCode, onRun }) => {
   const [editedCode, setEditedCode] = useState<string>(currentCode);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ currentCode, onCodeChange }) => {
   }, [currentCode]);
 
   const handleRun = () => {
-    onCodeChange(editedCode);
+    onRun(editedCode);
   };
 
   return (
@@ -31,4 +31,4 @@ const CodePanel: React.FC<CodePanelProps> = ({ currentCode, onCodeChange }) => {
   );
 };
 
-export default CodePanel;
+export default CurrentCodePanel;

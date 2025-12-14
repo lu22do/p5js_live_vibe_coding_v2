@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 interface PreviousCodePanelProps {
   previousCode: string;
-  onCodeChange: (code: string) => void;
+  onRun: (code: string) => void;
 }
 
-const PreviousCodePanel: React.FC<PreviousCodePanelProps> = ({ previousCode, onCodeChange }) => {
+const PreviousCodePanel: React.FC<PreviousCodePanelProps> = ({ previousCode, onRun }) => {
   const [editedCode, setEditedCode] = useState<string>(previousCode);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const PreviousCodePanel: React.FC<PreviousCodePanelProps> = ({ previousCode, onC
   }, [previousCode]);
 
   const handleRun = () => {
-    onCodeChange(editedCode);
+    onRun(editedCode);
   };
 
   return (
