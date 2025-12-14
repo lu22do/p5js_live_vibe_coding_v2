@@ -5,6 +5,7 @@ import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firesto
 import { db } from './firebase';
 import { type Message } from './types';
 import ChatPanel from './components/ChatPanel';
+import PreviousCodePanel from './components/PreviousCodePanel';
 import CodePanel from './components/CodePanel';
 import RenderPanel from './components/RenderPanel';
 
@@ -15,6 +16,7 @@ const openai = new OpenAI({
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [previousCode, setPreviousCode] = useState<string>('');
   const [currentCode, setCurrentCode] = useState<string>('');
   const [input, setInput] = useState<string>('');
 
@@ -49,6 +51,7 @@ function App() {
       });
       const code = response.choices[0].message.content || '';
       const cleanedCode = code.replace(/```javascript\n?/g, '').replace(/```\n?/g, '').trim();
+      setPreviousCode(currentCode);
       setCurrentCode(cleanedCode);
       const assistantMessage: Message = { role: 'assistant', content: cleanedCode, timestamp: new Date() };
       await addDoc(messagesRef, assistantMessage);
@@ -60,6 +63,7 @@ function App() {
   return (
     <div className="app">
       <ChatPanel messages={messages} input={input} setInput={setInput} sendMessage={sendMessage} />
+      <PreviousCodePanel previousCode={previousCode} onCodeChange={setPreviousCode} />
       <CodePanel currentCode={currentCode} onCodeChange={setCurrentCode} />
       <RenderPanel currentCode={currentCode} />
     </div>

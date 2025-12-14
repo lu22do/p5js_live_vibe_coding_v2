@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-interface CodePanelProps {
-  currentCode: string;
+interface PreviousCodePanelProps {
+  previousCode: string;
   onCodeChange: (code: string) => void;
 }
 
-const CodePanel: React.FC<CodePanelProps> = ({ currentCode, onCodeChange }) => {
-  const [editedCode, setEditedCode] = useState<string>(currentCode);
+const PreviousCodePanel: React.FC<PreviousCodePanelProps> = ({ previousCode, onCodeChange }) => {
+  const [editedCode, setEditedCode] = useState<string>(previousCode);
 
   useEffect(() => {
-    setEditedCode(currentCode);
-  }, [currentCode]);
+    setEditedCode(previousCode);
+  }, [previousCode]);
 
   const handleRun = () => {
     onCodeChange(editedCode);
@@ -18,7 +18,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ currentCode, onCodeChange }) => {
 
   return (
     <div className="panel code-panel">
-      <h2>Current Code</h2>
+      <h2>Previous Code</h2>
       <textarea
         value={editedCode}
         onChange={(e) => setEditedCode(e.target.value)}
@@ -31,4 +31,4 @@ const CodePanel: React.FC<CodePanelProps> = ({ currentCode, onCodeChange }) => {
   );
 };
 
-export default CodePanel;
+export default PreviousCodePanel;
